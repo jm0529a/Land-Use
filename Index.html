@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+
+<style type="text/css">
+.label {
+	font: 20px helvetica neue;
+}
+#dogpark {
+	float: left;
+}
+	
+	
+</style>
+<head>
+<title>Tiny Map</title>
+<h1>Tiny Map</h1>
+<h2>https://bl.ocks.org/adamjanes/6cf85a4fd79e122695ebde7d41fe327f</h2>
+</head>
+<body>
+
+	
+<div class="top">
+	<div id="Library">
+<script type="text/javascript">
+		 
+	var width = 240;
+	var height = 275;
+
+
+	d3.json("Wards.geojson")
+		.then(function(data){
+
+	var landUse = data;
+	var preference = ["Community Center", "Playground", "Community Garden", "Residential Use", "Library", "Athletic Fields", "Cultural Center", "Social Services", "Dog Park", "Commercial Use"];
+
+
+	preference.forEach(function(pref){
+		
+
+		var svg = d3.select("body").append("svg")
+			.attr("width", width)
+			.attr("height", height);
+
+		
+		var land = d3.map();
+
+		var projection = d3.geoMercator()
+			.center([-77.0369, 38.9072])
+			.scale(44000)
+			.translate([ width/2, height/2])
+
+		var path = d3.geoPath()
+			.projection(projection);
+
+
+		var nestedData = d3.nest()
+		.key(function(d){
+			return d.properties[pref];
+		})
+		.key(function(d){
+			return d.geometry["coordinates"];
+		})
+		.entries(landUse.features)
+			.map(function(d){
+				return d.key;
+			});
+
+		var hue = d3.scaleSequential()
+		.domain([1.3, 22.6])
+		.interpolator(d3.interpolateBlues);
+
+		var Wards = d3.nest()
+			.key(function(d){
+				return d.properties["WARD"]
+			})
+			.key(function(d){
+				return d.geometry["coordinates"];
+			})
+			.entries(landUse.features)
+				.map(function(d){
+					return d["key"];
+			})
+
+				console.log(Wards)
+
+
+		
+
+		svg.selectAll("path")
+			.data(data.features)
+			.enter()
+			.append("path")
+			.attr("d", path)
+			.style("fill", function(d){
+				return hue(d.properties[pref])
+			})
+			.style("stroke", "black")
+			.style("stroke-width", "1px");
+
+		svg.selectAll("text")
+			.data(landUse.features)
+			.enter()
+			.append("text")
+			.attr("class", "label")
+			.style("text-anchor", "middle")
+			.attr("x", (width + 10)/2)
+			.attr("y", height -245)
+			.text(function(d){
+				return pref
+			})
+		
+
+			
+			
+
+
+	})
+	
+	var rectangleData = [
+		{ "rx": 110, "ry": 110, "height": 20, "width": 300, "color": "blue"},];
+		
+	var prefscale = d3.select("body").append("svg")
+		.attr("width", 500)
+		.attr("height", 200);
+
+
+	var rectangle = prefscale.selectAll("rect")
+			.data(rectangleData)
+			.enter()
+			.append("rect");
+			// .attr("x", 20)
+			// .attr("y", 20)
+			// .attr("width", 500)
+			// .attr("height", 20)
+
+	var huescale = d3.scaleThreshold()
+		.domain(d3.range(0, 25))
+		.range(d3.schemeBlues[9]);
+			
+	var rectangleAttributes = rectangle
+		.attr("x", function (d) { return d.rx; })
+		.attr("y", function (d) { return d.ry; })
+		.attr("height", function (d) { return d.height; })
+		.attr("width", function (d) { return d.width; })
+		.style("fill", "red");
+
+
+	// prefscale.selectAll("rect")
+	// 	.data(landUse)
+	// 	.enter()
+	// 	.append("rect")
+	// 		.style("fill", "green")
+	
+
+
+		
+
+		
+			
+
+
+
+	var CommCenter = d3.nest()
+		.key(function(d){
+			return d.properties["Community Center"];
+		})
+		.key(function(d){
+			return d.geometry["coordinates"];
+		})
+		.entries(landUse.features)
+			.map(function(d){
+				return d["key"];
+			})
+
+	} )
+</script>
+
+</div>
+</div>
+
+
+	</div>
+</body>
+</html>
